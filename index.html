@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/x-icon" href="IMG/corazon.png">
+
+    <title>❤️</title>
+    <style>
+        :root {
+            --primary-color: #ff4b6b;
+            --secondary-color: #ff8fa3;
+            --background-color: #1a1a2e;
+            --text-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .navigation {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 26, 46, 0.95);
+            padding: 1rem;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            padding-top: 80px;
+            text-align: center;
+        }
+
+        .hero {
+            height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, var(--background-color), var(--primary-color));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 10px;
+            margin: 1rem 0;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover img {
+            transform: scale(1.05);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 75, 107, 0.1));
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: translateY(0);
+        }
+
+        .floating-hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .button {
+            background: var(--primary-color);
+            color: var(--text-color);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+            }
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: var(--primary-color);
+            font-size: 20px;
+            animation: float 6s linear infinite;
+            opacity: 0.5;
+        }
+
+        .secret-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            color: var(--background-color);
+            z-index: 1001;
+            transition: all 0.3s ease;
+            opacity: 0;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .secret-message img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin: 1rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .secret-message.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--background-color);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .music-container {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+            padding: 1rem;
+        }
+
+        .music-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 1rem;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .music-button:hover {
+            transform: scale(1.1);
+            background: var(--primary-color);
+        }
+
+        .music-button.playing {
+            background: var(--primary-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 75, 107, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 75, 107, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 75, 107, 0);
+            }
+        }
+
+        .music-button svg {
+            width: 40px;
+            height: 40px;
+            fill: currentColor;
+
+        }
+
+        .music-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .coupon {
+            background: linear-gradient(135deg, #ff6b8b, #ff4b6b);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coupon::before {
+            content: '❤️';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+        }
+
+        .coupon h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .coupon p {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            color: white;
+        }
+
+        .coupon .validity {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 1rem;
+        }
+
+        .coupon-code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            display: inline-block;
+            margin: 1rem 0;
+            color: white;
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navigation">
+        <ul class="nav-links">
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#mensajes">Mensajes</a></li>
+            <li><a href="#momentos">Momentos</a></li>
+            <li><a href="#sorpresas">Sorpresas</a></li>
+        </ul>
+    </nav>
+
+    <div class="floating-hearts" id="floating-hearts"></div>
+
+    <main class="main-content">
+        <section id="inicio" class="hero">
+            <h1>❤️ Mi Amor ❤️</h1>
+            <p>Te acuerdas de todos estos momentos mi niña hermosa :]?</p>
+            <div class="music-container">
+                <button class="music-button" onclick="toggleMusic('song1')" id="btn1">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <span class="music-label">❤️</span>
+                    <audio id="song1" src="music/viernes_13.mp3"></audio>
+                </button>
+
+                <button class="music-button" onclick="toggleMusic('song2')" id="btn2">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <span class="music-label">Primer cancion</span>
+                    <audio id="song2" src="music/ojala.mp3"></audio>
+                </button>
+
+                <button class="music-button" onclick="toggleMusic('song3')" id="btn3">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <span class="music-label">Accidentally In Love</span>
+                    <audio id="song3" src="music/accidentallyinlove.mp3"></audio>
+                </button>
+
+                <button class="music-button" onclick="toggleMusic('song4')" id="btn4">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <span class="music-label">Te Amo</span>
+                    <audio id="song4" src="music/congratulations-piano-version.mp3"></audio>
+                </button>
+            </div>
+            <a href="#mensajes" class="button">Comenzar el Viaje</a>
+        </section>
+
+        <section id="mensajes" class="cards-container">
+            <div class="card"
+                onclick="showMessage('Te acuerdas de la primera vez que nos vimos?, la primera vez que nos conocimos? 🤭🤭🤭, eramos tan opuestos y tambien bien apuestos 😂 , Sabes recuerdo que la primera ves que nos conocimos fue de legitos en noveno año del colegio y cuando ya nos comenzamos a conocer fue en decimo año, fue todo tan bonito ❤️', 'IMG/1537642526017.jpg')">
+                <h3>Mensaje Especial #1</h3>
+                <p>-- Abreme --</p>
+            </div>
+            <div class="card"
+                onclick="showMessage('Sabes cuando te iba conociendo dije, wow esta chica es genial, tiene de todo un poco, ella lo tiene todo, y siempre ha sido asi por todo este tiempo, ella, ella, ella, ella, ella; no podia sacarte de mi cabeza me huviera gustado avertelo dicho oye me gustas, aunque huviera sido extaño segun yo 🤭🤭🤭, teniamos una bonita amistad que me huviera gustado que escale a -más- aunque no me siento mal con lo de todo a su tiempo 🤭❤️', 'IMG/1537642663036.jpg')">
+                <h3>Mensaje Especial #2</h3>
+                <p>-- Abreme --</p>
+            </div>
+            <div class="card"
+                onclick="showMessage('Eres el amor de mi vida, aun nos quedan muchas cosas mas por vivir de poco en poco iremos alcanzando nuestros sueños y metas, apollandonos mutuamente :]')">
+                <h3>Mensaje Especial #3</h3>
+                <p>-- Abreme --</p>
+            </div>
+        </section>
+
+        <section id="momentos" class="cards-container">
+            <div class="card">
+                <h3>:]</h3>
+                <p>Momentos que nunca olvidare</p>
+                <img src="IMG/20180622_182624.jpg" alt="Nuestro primer encuentro juntos" loading="lazy">
+            </div>
+            <div class="card">
+                <h3>Te acuerdas aquel dia?</h3>
+                <p>Cuando el tiempo se detuvo solo para nosotros</p>
+                <img src="IMG/20180822_181938(1).jpg" alt="Nuestra primera cita especial" loading="lazy">
+            </div>
+            <div class="card">
+                <h3>Siempre fuimos una bonita pareja</h3>
+                <p>❤️❤️❤️</p>
+                <img src="IMG/20180824_183311.jpg" alt="Awww que hermosos" loading="lazy">
+            </div>
+
+
+            <div class="card">
+                <h3>Nuestro Primer Beso jijiji</h3>
+                <p>Te imaginas que hubiera sido aqui 🤭🤭🤭</p>
+                <img src="IMG/20190125_153558.jpg" alt="Nuestro primer casi beso" loading="lazy">
+            </div>
+
+            <div class="card">
+                <h3>Besito Besito Besito 🤭❤️</h3>
+                <img src="IMG/IMG_20221106_161456.jpg" alt="Beso" loading="lazy">
+            </div>
+
+            <div class="card">
+                <h3>Te amo mi niña bonita</h3>
+                <img src="IMG/IMG_20250125_161818_485.jpg" alt="Beso" loading="lazy">
+            </div>
+
+
+        </section>
+
+        <section id="sorpresas" class="cards-container">
+            <div class="card"
+                onclick="showCoupon('Cupón Romántico #1', 'Válido por una Cena', 'Este cupon sera para ir a comer a un lado puede ser tambien un almuerzo y asi :3', '¿Donde podria ser?')">
+                <h3>Sorpresa #1</h3>
+                <p>Tenemos una cita</p>
+                <a href="#" class="button">Revelar Cupón</a>
+            </div>
+            <div class="card"
+                onclick="showCoupon('Cupón de tragon #2', 'Valido por dos golocinas', 'Este cupon sera para alguna golocina que vea y quiera' , '¿Que le gustaria a mi niña?')">
+                <h3>Sorpresa #2</h3>
+                <p>Mi tragona concentida 🤭❤️</p>
+                <a href="#" class="button">Revelar Cupón</a>
+            </div>
+            <div class="card"
+                onclick="showCoupon('Cupón Especial #3', 'Valido para dos comida en la calle -Frituras-', 'Este cupon puede ser tomado por separado', '¿Papipollo y/o Mollejita?')">
+                <h3>Sorpresa #3</h3>
+                <p>Otra cita</p>
+                <a href="#" class="button">Revelar Cupón</a>
+            </div>
+        </section>
+    </main>
+
+    <div class="secret-message" id="secretMessage">
+        <button class="close-button" onclick="closeMessage()">x</button>
+        <h2>Holi!</h2>
+        <p id="messageContent"></p>
+        <div id="messageImage"></div>
+    </div>
+
+    <script>
+        // Crear corazones flotantes
+        function createFloatingHearts() {
+            const container = document.getElementById('floating-hearts');
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤';
+            heart.className = 'floating-heart';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            container.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        setInterval(createFloatingHearts, 300);
+
+        // Mostrar mensajes secretos
+        function showMessage(message, imageSrc) {
+            const messageElement = document.getElementById('secretMessage');
+            const messageContent = document.getElementById('messageContent');
+            const messageImage = document.getElementById('messageImage');
+
+            messageContent.textContent = message;
+
+            // Limpiar imagen anterior si existe
+            messageImage.innerHTML = '';
+
+            // Agregar nueva imagen si se proporciona
+            if (imageSrc) {
+                const img = document.createElement('img');
+                img.src = imageSrc;
+                img.alt = 'Imagen especial';
+                messageImage.appendChild(img);
+            }
+
+            messageElement.classList.add('active');
+        }
+
+        function closeMessage() {
+            const messageElement = document.getElementById('secretMessage');
+            messageElement.classList.remove('active');
+        }
+
+        // Smooth scroll para la navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+
+        // Función para controlar la reproducción de música
+        let currentlyPlaying = null;
+
+        function toggleMusic(songId) {
+            const audio = document.getElementById(songId);
+            const button = document.getElementById('btn' + songId.slice(-1));
+
+            // Si hay otra canción reproduciéndose, la detenemos
+            if (currentlyPlaying && currentlyPlaying !== audio) {
+                currentlyPlaying.pause();
+                currentlyPlaying.currentTime = 0;
+                document.querySelectorAll('.music-button').forEach(btn => btn.classList.remove('playing'));
+            }
+
+            if (audio.paused) {
+                audio.play();
+                button.classList.add('playing');
+                currentlyPlaying = audio;
+                // Cambiar el ícono a pausa
+                button.querySelector('svg').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            } else {
+                audio.pause();
+                audio.currentTime = 0;
+                button.classList.remove('playing');
+                currentlyPlaying = null;
+                // Cambiar el ícono a play
+                button.querySelector('svg').innerHTML = '<path d="M8 5v14l11-7z"/>';
+            }
+        }
+
+        // Evento para cuando una canción termina
+        document.querySelectorAll('audio').forEach(audio => {
+            audio.addEventListener('ended', () => {
+                const button = document.getElementById('btn' + audio.id.slice(-1));
+                button.classList.remove('playing');
+                button.querySelector('svg').innerHTML = '<path d="M8 5v14l11-7z"/>';
+                currentlyPlaying = null;
+            });
+        });
+
+
+        function showCoupon(title, subtitle, description, code, image) {
+            const messageElement = document.getElementById('secretMessage');
+            const messageContent = document.getElementById('messageContent');
+            const messageImage = document.getElementById('messageImage');
+
+            // Crear el contenido del cupón
+            messageContent.innerHTML = `
+        <div class="coupon">
+            <h3>${title}</h3>
+            <h4>${subtitle}</h4>
+            <p>${description}</p>
+            <div class="coupon-code">${code}</div>
+            <p class="validity">Válido hasta que el amor se acabe (o sea, para siempre ❤️)</p>
+        </div>
+    `;
+
+            // Limpiar imagen anterior si existe
+            messageImage.innerHTML = '';
+
+            // Agregar nueva imagen si se proporciona
+            if (image) {
+                const img = document.createElement('img');
+                img.src = image;
+                img.alt = 'Imagen del cupón';
+                messageImage.appendChild(img);
+            }
+
+            messageElement.classList.add('active');
+        }
+    </script>
+</body>
+
+</html>
